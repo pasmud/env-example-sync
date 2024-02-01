@@ -1,0 +1,9 @@
+{
+  "title": "Adjacent string tokens form a single literal lookup key",
+  "source": [
+    "import os",
+    "os.getenv('DEMO_' 'COLOR')"
+  ],
+  "references": [["DEMO_COLOR", 2, 1]],
+  "unsupported": []
+}
