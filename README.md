@@ -100,4 +100,15 @@ ruff check .
 ```
 
 CI runs on pushes and pull requests and checks the synthetic template with the installed command.
+
+### Inventory regression vectors
+
+The JSON fixtures in `tests/regression_vectors/` cover import aliases and rebinding, literal key
+boundaries, unresolved and indirect lookups, comments and docstrings, and exact source locations.
+Each fixture supplies synthetic Python source lines, expected `[key, line, column]` references, and
+expected `[line, column, reason]` diagnostics. The tests parse these snippets without executing them.
+
+Run the corpus with `python -m pytest -q tests/test_regression_vectors.py`. To run one case, add
+`-k` followed by its filename stem, for example `-k utf8-prefix-location`.
+
 This project is licensed under the [MIT License](LICENSE).

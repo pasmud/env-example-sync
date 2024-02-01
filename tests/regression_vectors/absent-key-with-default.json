@@ -1,0 +1,9 @@
+{
+  "title": "A getter with only a default still lacks a key",
+  "source": [
+    "import os",
+    "os.getenv(default='DEMO_NOT_A_KEY')"
+  ],
+  "references": [],
+  "unsupported": [[2, 1, "key is not a literal string"]]
+}
