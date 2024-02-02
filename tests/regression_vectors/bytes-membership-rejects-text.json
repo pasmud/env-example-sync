@@ -1,0 +1,9 @@
+{
+  "title": "Membership in environb rejects a text literal key",
+  "source": [
+    "import os",
+    "'DEMO_READY' in os.environb"
+  ],
+  "references": [],
+  "unsupported": [[2, 1, "key is not a bytes literal"]]
+}
