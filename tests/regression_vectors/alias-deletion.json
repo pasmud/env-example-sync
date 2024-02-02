@@ -1,0 +1,10 @@
+{
+  "title": "Deleting an imported name makes its uses ambiguous",
+  "source": [
+    "from os import getenv as read",
+    "read('DEMO_BEFORE_DELETE')",
+    "del read"
+  ],
+  "references": [],
+  "unsupported": [[2, 1, "import alias is local, conditional, or rebound"]]
+}
