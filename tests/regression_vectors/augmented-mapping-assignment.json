@@ -1,0 +1,9 @@
+{
+  "title": "An augmented assignment is diagnosed as a write, not a read",
+  "source": [
+    "import os",
+    "os.environ['DEMO_COUNTER'] += ''"
+  ],
+  "references": [],
+  "unsupported": [[2, 1, "environment assignment or deletion"]]
+}
