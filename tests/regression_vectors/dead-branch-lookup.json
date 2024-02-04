@@ -1,0 +1,12 @@
+{
+  "title": "Both branches are scanned and references are sorted by key",
+  "source": [
+    "import os",
+    "if False:",
+    "    os.getenv('DEMO_Z_DEAD')",
+    "else:",
+    "    os.getenv('DEMO_A_LIVE')"
+  ],
+  "references": [["DEMO_A_LIVE", 5, 5], ["DEMO_Z_DEAD", 3, 5]],
+  "unsupported": []
+}
