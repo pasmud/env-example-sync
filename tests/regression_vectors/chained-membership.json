@@ -1,0 +1,9 @@
+{
+  "title": "Chained membership reports the mapping as indirect access",
+  "source": [
+    "import os",
+    "'X' in os.environ in groups"
+  ],
+  "references": [],
+  "unsupported": [[2, 8, "indirect access or unsupported os API"]]
+}
