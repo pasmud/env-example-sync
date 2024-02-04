@@ -1,0 +1,11 @@
+{
+  "title": "A lookup in a decorator argument is inventoried",
+  "source": [
+    "import os",
+    "@tag(os.getenv('DEMO_DECORATOR'))",
+    "def task():",
+    "    pass"
+  ],
+  "references": [["DEMO_DECORATOR", 2, 6]],
+  "unsupported": []
+}
