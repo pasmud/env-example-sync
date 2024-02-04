@@ -1,0 +1,11 @@
+{
+  "title": "A later class definition makes an earlier alias use ambiguous",
+  "source": [
+    "import os as Runtime",
+    "Runtime.getenv('DEMO_EARLIER')",
+    "class Runtime:",
+    "    pass"
+  ],
+  "references": [],
+  "unsupported": [[2, 1, "import alias is local, conditional, or rebound"]]
+}
