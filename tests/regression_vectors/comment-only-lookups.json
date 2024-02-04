@@ -1,0 +1,10 @@
+{
+  "title": "Commented-out lookups emit neither keys nor diagnostics",
+  "source": [
+    "import os",
+    "# os.getenv('DEMO_COMMENT')",
+    "# os.environ[dynamic_name]"
+  ],
+  "references": [],
+  "unsupported": []
+}
