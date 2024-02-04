@@ -1,0 +1,10 @@
+{
+  "title": "An os import inside a module-level if is conditional",
+  "source": [
+    "if enabled:",
+    "    import os as runtime",
+    "runtime.getenv('DEMO_CONDITIONAL')"
+  ],
+  "references": [],
+  "unsupported": [[3, 1, "import alias is local, conditional, or rebound"]]
+}
