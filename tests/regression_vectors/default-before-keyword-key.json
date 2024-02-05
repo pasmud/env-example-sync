@@ -1,0 +1,9 @@
+{
+  "title": "A keyword key is found even when default comes first",
+  "source": [
+    "import os",
+    "os.getenv(default='DEMO_NOT_A_KEY', key='DEMO_KEYWORD')"
+  ],
+  "references": [["DEMO_KEYWORD", 2, 1]],
+  "unsupported": []
+}
