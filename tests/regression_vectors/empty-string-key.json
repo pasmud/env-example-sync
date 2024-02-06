@@ -1,0 +1,9 @@
+{
+  "title": "An empty string is literal but not a portable key",
+  "source": [
+    "import os",
+    "os.getenv('')"
+  ],
+  "references": [],
+  "unsupported": [[2, 1, "key is not a portable environment name"]]
+}
