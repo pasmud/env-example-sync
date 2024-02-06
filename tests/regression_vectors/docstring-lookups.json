@@ -1,0 +1,11 @@
+{
+  "title": "Lookup examples in a module docstring are just text",
+  "source": [
+    "\"\"\"Illustrative syntax:",
+    "os.environ['DEMO_DOC']",
+    "\"\"\"",
+    "import os"
+  ],
+  "references": [],
+  "unsupported": []
+}
