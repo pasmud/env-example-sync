@@ -1,0 +1,12 @@
+{
+  "title": "An exception handler name can shadow a getter alias",
+  "source": [
+    "from os import getenv as read",
+    "try:",
+    "    pass",
+    "except ValueError as read:",
+    "    read('DEMO_HANDLER')"
+  ],
+  "references": [],
+  "unsupported": [[5, 5, "import alias is local, conditional, or rebound"]]
+}
