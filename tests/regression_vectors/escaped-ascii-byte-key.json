@@ -1,0 +1,9 @@
+{
+  "title": "An ASCII escape in a byte key is reported as decoded text",
+  "source": [
+    "import os",
+    "os.environb[b'DEMO_\\x41']"
+  ],
+  "references": [["DEMO_A", 2, 1]],
+  "unsupported": []
+}
