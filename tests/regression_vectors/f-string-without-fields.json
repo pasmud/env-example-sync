@@ -1,0 +1,9 @@
+{
+  "title": "An f-string is not a literal key even without fields",
+  "source": [
+    "import os",
+    "os.getenv(f'DEMO_LABEL')"
+  ],
+  "references": [],
+  "unsupported": [[2, 1, "key is not a literal string"]]
+}
