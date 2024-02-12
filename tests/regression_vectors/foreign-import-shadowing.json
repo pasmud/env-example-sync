@@ -1,0 +1,10 @@
+{
+  "title": "An import from another module can shadow an os member alias",
+  "source": [
+    "from os import getenv as read",
+    "from math import floor as read",
+    "read('DEMO_SHADOWED')"
+  ],
+  "references": [],
+  "unsupported": [[3, 1, "import alias is local, conditional, or rebound"]]
+}
