@@ -24,6 +24,47 @@ def test_literal_reads_import_aliases_and_locations():
     assert "fake-default" not in repr(result)
 
 
+def test_byte_lookups_share_names_with_string_lookups():
+    result = scan(
+        "import os as runtime\n"
+        "from os import getenvb as option, environb as settings\n"
+        "runtime.getenvb(b'DEMO_HOST', b'fake-bytes-default')\n"
+        "option(key=b'DEMO_PORT')\n"
+        "settings[b'DEMO_HOST']\n"
+        "runtime.environb.get(b'DEMO_STAGE')\n"
+        "settings.setdefault(b'DEMO_MODE', b'fake-bytes-default')\n"
+        "b'DEMO_READY' in settings\n"
+        "b'DEMO_DEBUG' not in runtime.environb\n"
+        "runtime.getenv('DEMO_HOST')\n",
+        "bytes.py",
+    )
+    assert not result.unsupported
+    assert result.keys == ("DEMO_DEBUG", "DEMO_HOST", "DEMO_MODE", "DEMO_PORT", "DEMO_READY", "DEMO_STAGE")
+    assert [ref.location for ref in result.references if ref.key == "DEMO_HOST"] == [
+        Location("bytes.py", line, 1) for line in (3, 5, 10)
+    ]
+    assert "fake-bytes-default" not in repr(result)
+
+
+@pytest.mark.parametrize(
+    ("expression", "reason"),
+    [
+        ("os.getenvb(name)", "key is not a bytes literal"),
+        ("os.getenvb('DEMO_WRONG_TYPE')", "key is not a bytes literal"),
+        ("os.environb.get(b'DEMO_\\xff')", "key is not a portable environment name"),
+        ("os.environb[b'DEMO-DASH']", "key is not a portable environment name"),
+        ("os.environb[b'DEMO_SET'] = b'fake-assignment'", "environment assignment or deletion"),
+        ("os.getenv(b'DEMO_WRONG_TYPE')", "key is not a literal string"),
+    ],
+)
+def test_byte_lookups_only_accept_portable_literal_byte_keys(expression, reason):
+    result = scan(f"import os\n{expression}\n", "bytes.py")
+    assert not result.references
+    assert [(issue.location, issue.reason) for issue in result.unsupported] == [
+        (Location("bytes.py", 2, 1), reason)
+    ]
+
+
 def test_unsupported_access_reports_one_location_per_form_and_no_snippets():
     result = scan(
         "import os\n"
@@ -33,7 +74,7 @@ def test_unsupported_access_reports_one_location_per_form_and_no_snippets():
         "os.getenv('non-portable-fake')\n"
         "mapping = os.environ\n"
         "os.environ.pop('DEMO_POP')\n"
-        "os.getenvb(b'DEMO_BYTES')\n"
+        "os.environb.keys()\n"
         "os.getenv(*items)\n",
         "demo.py",
     )

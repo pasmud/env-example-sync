@@ -61,7 +61,7 @@ Inventory and sync success messages go to stdout. Drift, unsupported access and 
 ## Supported Python syntax
 
 The scanner recognizes these forms through direct module-level `import os` and
-`from os import environ, getenv`, including `as` aliases:
+`from os import ...` for the APIs below, including `as` aliases:
 
 | Form | Synthetic example |
 | --- | --- |
@@ -69,10 +69,14 @@ The scanner recognizes these forms through direct module-level `import os` and
 | Environment subscript reads | `os.environ["DEMO_ENDPOINT"]` |
 | Environment mapping lookups | `os.environ.get("DEMO_TIMEOUT")`, `os.environ.setdefault("DEMO_MODE", "fake-mode")` |
 | Single membership tests | `"DEMO_METRICS" in os.environ`, `"DEMO_DEBUG" not in os.environ` |
+| Byte-oriented equivalents | `os.getenvb(key=b"DEMO_REGION")`, `os.environb[b"DEMO_ENDPOINT"]` |
 
-Keys must be literal strings matching `[A-Za-z_][A-Za-z0-9_]*`. The scanner reports variables,
-f-strings, computed keys, writes, indirect references such as `mapping = os.environ`, and other
-operations on recognized members as unsupported. Local, conditional and multiply bound import
+Keys must be literals matching `[A-Za-z_][A-Za-z0-9_]*`: strings for `getenv` and `environ`, and
+ASCII bytes for `getenvb` and `environb`. Byte keys are reported as the same names as their string
+equivalents, even when the scanner runs on a platform that does not provide the byte APIs.
+The scanner reports variables, f-strings, computed keys, writes, indirect references such as
+`mapping = os.environ`, and other operations on recognized members as unsupported. Local,
+conditional and multiply bound import
 aliases are conservatively flagged; an unrelated binding of the same name anywhere in a file can
 make an alias ambiguous. The tool does not resolve wildcard imports, reflection, wrappers or
 third-party configuration libraries and cannot prove it found every runtime lookup. It scans all

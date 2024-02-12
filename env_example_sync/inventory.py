@@ -6,7 +6,9 @@ from collections import Counter
 from dataclasses import dataclass
 
 KEY = re.compile(r"[A-Za-z_][A-Za-z0-9_]*", re.ASCII)
-_MEMBERS = {"environ", "getenv", "environb", "getenvb"}
+_GETTERS = {"getenv", "getenvb"}
+_MAPPINGS = {"environ", "environb"}
+_MEMBERS = _GETTERS | _MAPPINGS
 
 
 @dataclass(frozen=True, order=True)
@@ -111,25 +113,34 @@ class _Scanner(ast.NodeVisitor):
             return node.attr, node.value.id in self.ambiguous
         return "", False
 
-    def record(self, node: ast.expr, key: ast.expr | None, ambiguous: bool) -> None:
+    def record(self, node: ast.expr, key: ast.expr | None, member: str, ambiguous: bool) -> None:
         if ambiguous:
             self.reject(node, "import alias is local, conditional, or rebound")
-        elif not isinstance(key, ast.Constant) or not isinstance(key.value, str):
-            self.reject(node, "key is not a literal string")
-        elif not KEY.fullmatch(key.value):
+            return
+        literal_type = bytes if member in {"environb", "getenvb"} else str
+        if not isinstance(key, ast.Constant) or not isinstance(key.value, literal_type):
+            reason = "key is not a bytes literal" if literal_type is bytes else "key is not a literal string"
+            self.reject(node, reason)
+            return
+        value = key.value
+        if not value.isascii():
+            self.reject(node, "key is not a portable environment name")
+            return
+        name = value.decode("ascii") if isinstance(value, bytes) else value
+        if not KEY.fullmatch(name):
             self.reject(node, "key is not a portable environment name")
         else:
-            self.references.append(Reference(key.value, self.location(node)))
+            self.references.append(Reference(name, self.location(node)))
 
     def visit_Call(self, node: ast.Call) -> None:
         member, ambiguous = self.member(node.func)
-        keyword_key = member == "getenv"
+        keyword_key = member in _GETTERS
         if isinstance(node.func, ast.Attribute) and node.func.attr in {"get", "setdefault"}:
             member, ambiguous = self.member(node.func.value)
             keyword_key = False
-            if member != "environ":
+            if member not in _MAPPINGS:
                 member = ""
-        elif member != "getenv":
+        elif not keyword_key:
             member = ""
         if not member:
             self.generic_visit(node)
@@ -137,15 +148,15 @@ class _Scanner(ast.NodeVisitor):
         key = node.args[0] if node.args else None
         if key is None and keyword_key:
             key = next((kw.value for kw in node.keywords if kw.arg == "key"), None)
-        self.record(node, key, ambiguous)
+        self.record(node, key, member, ambiguous)
         for argument in (*node.args, *node.keywords):
             self.visit(argument)
 
     def visit_Subscript(self, node: ast.Subscript) -> None:
         member, ambiguous = self.member(node.value)
-        if member == "environ":
+        if member in _MAPPINGS:
             if isinstance(node.ctx, ast.Load):
-                self.record(node, node.slice, ambiguous)
+                self.record(node, node.slice, member, ambiguous)
             else:
                 self.reject(node, "environment assignment or deletion")
             self.visit(node.slice)
@@ -155,8 +166,8 @@ class _Scanner(ast.NodeVisitor):
     def visit_Compare(self, node: ast.Compare) -> None:
         if len(node.ops) == 1 and isinstance(node.ops[0], (ast.In, ast.NotIn)):
             member, ambiguous = self.member(node.comparators[0])
-            if member == "environ":
-                self.record(node, node.left, ambiguous)
+            if member in _MAPPINGS:
+                self.record(node, node.left, member, ambiguous)
                 self.visit(node.left)
                 return
         self.generic_visit(node)
