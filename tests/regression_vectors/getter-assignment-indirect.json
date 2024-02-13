@@ -1,0 +1,10 @@
+{
+  "title": "Assigning a getter is diagnosed without resolving its new alias",
+  "source": [
+    "import os",
+    "read = os.getenv",
+    "read('DEMO_INDIRECT')"
+  ],
+  "references": [],
+  "unsupported": [[2, 8, "indirect access or unsupported os API"]]
+}
