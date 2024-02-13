@@ -1,0 +1,10 @@
+{
+  "title": "A function-local environment import is unresolved",
+  "source": [
+    "def read():",
+    "    from os import environ as settings",
+    "    return settings['DEMO_LOCAL']"
+  ],
+  "references": [],
+  "unsupported": [[3, 12, "import alias is local, conditional, or rebound"]]
+}
