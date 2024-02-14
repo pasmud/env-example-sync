@@ -1,0 +1,10 @@
+{
+  "title": "A module import below a function still resolves its lookup",
+  "source": [
+    "def read():",
+    "    return os.getenv('DEMO_LATE')",
+    "import os"
+  ],
+  "references": [["DEMO_LATE", 2, 12]],
+  "unsupported": []
+}
