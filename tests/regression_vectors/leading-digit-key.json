@@ -1,0 +1,9 @@
+{
+  "title": "A digit is rejected in the first position of a key",
+  "source": [
+    "import os",
+    "os.getenv('2DEMO')"
+  ],
+  "references": [],
+  "unsupported": [[2, 1, "key is not a portable environment name"]]
+}
