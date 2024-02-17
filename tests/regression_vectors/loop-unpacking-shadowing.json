@@ -1,0 +1,10 @@
+{
+  "title": "An unpacked loop target can shadow an environment alias",
+  "source": [
+    "from os import environ as settings",
+    "for index, settings in pairs:",
+    "    settings.get('DEMO_LOOP')"
+  ],
+  "references": [],
+  "unsupported": [[3, 5, "import alias is local, conditional, or rebound"]]
+}
