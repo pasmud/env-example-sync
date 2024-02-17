@@ -1,0 +1,9 @@
+{
+  "title": "Keyword unpacking does not resolve a getenv key",
+  "source": [
+    "import os",
+    "os.getenv(**{'key': 'DEMO_PACKED'})"
+  ],
+  "references": [],
+  "unsupported": [[2, 1, "key is not a literal string"]]
+}
