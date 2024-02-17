@@ -1,0 +1,9 @@
+{
+  "title": "A leading underscore permits lowercase letters and later digits",
+  "source": [
+    "import os",
+    "os.getenv('_demo2')"
+  ],
+  "references": [["_demo2", 2, 1]],
+  "unsupported": []
+}
