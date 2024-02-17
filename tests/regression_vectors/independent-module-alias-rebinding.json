@@ -1,0 +1,12 @@
+{
+  "title": "Rebinding one os alias does not invalidate a separate alias",
+  "source": [
+    "import os as first",
+    "import os as second",
+    "first = object()",
+    "first.getenv('DEMO_REBOUND')",
+    "second.getenv('DEMO_RETAINED')"
+  ],
+  "references": [["DEMO_RETAINED", 5, 1]],
+  "unsupported": [[4, 1, "import alias is local, conditional, or rebound"]]
+}
