@@ -1,0 +1,11 @@
+{
+  "title": "A sequence pattern's star capture can shadow an os alias",
+  "source": [
+    "import os as runtime",
+    "match items:",
+    "    case [*runtime]:",
+    "        runtime.getenv('DEMO_SEQUENCE')"
+  ],
+  "references": [],
+  "unsupported": [[4, 9, "import alias is local, conditional, or rebound"]]
+}
