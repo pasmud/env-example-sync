@@ -1,0 +1,9 @@
+{
+  "title": "The getter key keyword is not accepted for a mapping lookup",
+  "source": [
+    "import os",
+    "os.environ.get(key='DEMO_MAP')"
+  ],
+  "references": [],
+  "unsupported": [[2, 1, "key is not a literal string"]]
+}
