@@ -1,0 +1,11 @@
+{
+  "title": "A mapping pattern's rest capture can shadow an environ alias",
+  "source": [
+    "from os import environ as settings",
+    "match item:",
+    "    case {**settings}:",
+    "        settings.get('DEMO_PATTERN')"
+  ],
+  "references": [],
+  "unsupported": [[4, 9, "import alias is local, conditional, or rebound"]]
+}
