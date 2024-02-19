@@ -1,0 +1,13 @@
+{
+  "title": "A multiline getter points to the call, not the key literal",
+  "source": [
+    "import os",
+    "value = (",
+    "    os.getenv(",
+    "        'DEMO_MULTILINE',",
+    "    )",
+    ")"
+  ],
+  "references": [["DEMO_MULTILINE", 3, 5]],
+  "unsupported": []
+}
