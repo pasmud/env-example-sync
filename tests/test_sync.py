@@ -37,6 +37,47 @@ def test_check_never_creates_and_lists_each_missing_key_once(project, capsys):
     assert sync("--check") == 0
 
 
+@pytest.mark.parametrize("create_example", [False, True])
+def test_check_names_only_outputs_sorted_unique_names_without_writing(project, capsys, create_example):
+    original = b"# synthetic template comment\nEXTRA=\n"
+    if create_example:
+        project.write_bytes(original)
+
+    assert sync("--check", "--names-only") == 1
+    output = capsys.readouterr()
+    assert output.out == "DEMO_A\nDEMO_Z\n"
+    if create_example:
+        assert output.err == ""
+        assert project.read_bytes() == original
+    else:
+        assert output.err == ".env.example: example does not exist\n"
+        assert not project.exists()
+
+
+def test_check_names_only_is_quiet_for_complete_template(project, capsys):
+    project.write_bytes(b"DEMO_A=\nDEMO_Z=\nEXTRA=\n")
+    assert sync("--check", "--names-only") == 0
+    output = capsys.readouterr()
+    assert output.out == output.err == ""
+
+
+def test_check_names_only_missing_template_with_no_keys_is_still_drift(project, capsys):
+    Path("settings.py").write_text("# No configuration lookups\n")
+    assert sync("--check", "--names-only") == 1
+    output = capsys.readouterr()
+    assert output.out == ""
+    assert output.err == ".env.example: example does not exist\n"
+    assert not project.exists()
+
+
+def test_names_only_requires_check(project, capsys):
+    with pytest.raises(SystemExit) as error:
+        sync("--names-only")
+    assert error.value.code == 2
+    assert "--names-only requires --check" in capsys.readouterr().err
+    assert not project.exists()
+
+
 def test_append_preserves_comments_order_bom_crlf_and_mode(project):
     original = b"\xef\xbb\xbf# Fake project\r\n\r\n export EXTERNAL_KEY =  # documented elsewhere\r\nDEMO_Z="
     project.write_bytes(original)
@@ -60,21 +101,24 @@ def test_append_preserves_comments_order_bom_crlf_and_mode(project):
 def test_malformed_or_populated_examples_are_untouched(project, capsys, original):
     project.write_bytes(original)
     assert sync("--check") == 2
+    assert sync("--check", "--names-only") == 2
     assert sync() == 2
     assert project.read_bytes() == original
     output = capsys.readouterr()
     assert not output.out
     assert "synthetic-value" not in output.err
     assert "fake-value" not in output.err
-    assert output.err.count("error: .env.example:") == 2
+    assert output.err.count("error: .env.example:") == 3
 
 
 def test_unsupported_source_does_not_modify_existing_example(project, capsys):
     project.write_bytes(b"# Fake settings\n")
     Path("settings.py").write_text("import os\nos.environ['DEMO_A']\nos.getenv(computed_name)\n")
-    assert sync() == sync("--check") == 1
+    assert sync() == sync("--check") == sync("--check", "--names-only") == 1
     assert project.read_bytes() == b"# Fake settings\n"
-    assert capsys.readouterr().err.count("settings.py:3:1: unsupported:") == 2
+    output = capsys.readouterr()
+    assert not output.out
+    assert output.err.count("settings.py:3:1: unsupported:") == 3
 
 
 def test_sync_rejects_real_env_name_symlinks_and_hardlinks(project):

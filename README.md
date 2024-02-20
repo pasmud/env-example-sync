@@ -22,8 +22,9 @@ Paths beneath the working directory are relative; other paths are absolute. Line
 one-based; lookup columns count UTF-8 bytes, as in Python's AST.
 
 To see a check fail, remove `DEMO_TIMEOUT=` from the synthetic template and rerun the check. It
-reports the missing key and its first source location without modifying the file. Restore the key
-by running the same command without `--check`. To see unsupported access diagnostics, run:
+reports the missing key and its first source location without modifying the file. Add `--names-only`
+to that check to get just `DEMO_TIMEOUT` on stdout. Restore the key by running the sync command
+without either flag. To see unsupported access diagnostics, run:
 
 ```sh
 python -m env_example_sync inventory examples/dynamic_settings.py
@@ -49,6 +50,9 @@ python -m env_example_sync inventory examples/dynamic_settings.py
 - `sync --check` never writes. A missing file is drift even if no keys were found. Extra blank
   keys do not count as drift. Either sync mode stops on detected unsupported access before
   opening the template, since it cannot verify completeness for those sources.
+- `sync --check --names-only` prints missing names to stdout, one per line, sorted and deduplicated,
+  without values or source locations. A complete template produces no output. Missing-template
+  notices, unsupported access diagnostics and errors still go to stderr, and exit codes are unchanged.
 
 | Exit | Meaning |
 | --- | --- |
@@ -56,7 +60,8 @@ python -m env_example_sync inventory examples/dynamic_settings.py
 | `1` | Unsupported access was detected, or the example is missing/incomplete in check mode. Inventory still prints known keys. |
 | `2` | Invalid arguments, path, Python syntax, example syntax, or filesystem error. |
 
-Inventory and sync success messages go to stdout. Drift, unsupported access and errors go to stderr.
+Inventory and sync success messages go to stdout by default. Drift, unsupported access and errors
+go to stderr, except for the opt-in names-only output described above.
 
 ## Supported Python syntax
 

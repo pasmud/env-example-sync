@@ -15,7 +15,7 @@ def _report_unsupported(result: Inventory) -> int:
     return int(bool(result.unsupported))
 
 
-def _sync(result: Inventory, target: Path, check: bool) -> int:
+def _sync(result: Inventory, target: Path, check: bool, *, names_only: bool) -> int:
     if _report_unsupported(result):
         return 1
     plan = plan_example(target, result.keys)
@@ -23,6 +23,10 @@ def _sync(result: Inventory, target: Path, check: bool) -> int:
     if check and plan.needs_write:
         if plan.mode is None:
             print(f"{name}: example does not exist", file=sys.stderr)
+        if names_only:
+            for key in plan.missing:
+                print(key)
+            return 1
         missing = set(plan.missing)
         reported = set()
         for reference in result.references:
@@ -33,7 +37,7 @@ def _sync(result: Inventory, target: Path, check: bool) -> int:
     if plan.needs_write:
         plan.write()
         print(f"{name}: added {len(plan.missing)} blank key(s)")
-    else:
+    elif not names_only:
         print(f"{name}: up to date")
     return 0
 
@@ -46,13 +50,18 @@ def main(argv: list[str] | None = None) -> int:
     sync = actions.add_parser("sync", help="append missing blank keys to an example")
     sync.add_argument("--example", required=True, metavar="PATH", type=Path, help="explicit .env.example path")
     sync.add_argument("--check", action="store_true", help="report drift without writing")
+    sync.add_argument(
+        "--names-only", action="store_true", help="print only missing names to stdout (requires --check)"
+    )
     sync.add_argument("sources", metavar="SOURCE", type=Path, nargs="+")
     args = parser.parse_args(argv)
+    if args.action == "sync" and args.names_only and not args.check:
+        sync.error("--names-only requires --check")
 
     try:
         result = inventory_paths(args.sources)
         if args.action == "sync":
-            return _sync(result, args.example, args.check)
+            return _sync(result, args.example, args.check, names_only=args.names_only)
     except (InputError, SourceSyntaxError, OSError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
