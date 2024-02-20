@@ -1,0 +1,10 @@
+{
+  "title": "A module constant's name is not folded into a literal key",
+  "source": [
+    "import os",
+    "NAME = 'DEMO_NAMED'",
+    "os.getenv(NAME)"
+  ],
+  "references": [],
+  "unsupported": [[3, 1, "key is not a literal string"]]
+}
