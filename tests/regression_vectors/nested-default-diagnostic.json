@@ -1,0 +1,9 @@
+{
+  "title": "A valid outer getter still reports a dynamic default lookup",
+  "source": [
+    "import os",
+    "os.getenv('DEMO_PRIMARY', default=os.getenv(name))"
+  ],
+  "references": [["DEMO_PRIMARY", 2, 1]],
+  "unsupported": [[2, 35, "key is not a literal string"]]
+}
