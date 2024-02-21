@@ -1,0 +1,9 @@
+{
+  "title": "A Unicode letter in a text key is not portable",
+  "source": [
+    "import os",
+    "os.getenv('DÉMO')"
+  ],
+  "references": [],
+  "unsupported": [[2, 1, "key is not a portable environment name"]]
+}
