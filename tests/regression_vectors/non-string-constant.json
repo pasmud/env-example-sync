@@ -1,0 +1,9 @@
+{
+  "title": "An explicit None key is not a string literal",
+  "source": [
+    "import os",
+    "os.getenv(None)"
+  ],
+  "references": [],
+  "unsupported": [[2, 1, "key is not a literal string"]]
+}
