@@ -1,0 +1,9 @@
+{
+  "title": "Concatenation with plus is not folded into a literal key",
+  "source": [
+    "import os",
+    "os.getenv('DEMO_' + 'COLOR')"
+  ],
+  "references": [],
+  "unsupported": [[2, 1, "key is not a literal string"]]
+}
