@@ -45,27 +45,33 @@ class SourceSyntaxError(ValueError):
     """A source could not be parsed; its contents are not part of the error."""
 
 
-def _bindings(tree: ast.Module) -> tuple[dict[str, str], Counter[str]]:
-    """Resolve direct module imports; conservatively flag aliases bound elsewhere."""
+def _bindings(tree: ast.Module) -> tuple[dict[str, str], set[str]]:
+    """Resolve direct module imports and retain other imports for diagnostics."""
     aliases = {}
     direct = set(tree.body)
+    module_aliases = set()
     seen: Counter[str] = Counter()
     for node in ast.walk(tree):
         if isinstance(node, (ast.Import, ast.ImportFrom)):
             for item in node.names:
                 name = item.asname or item.name.split(".", 1)[0]
                 seen[name] += 1
-                if node not in direct:
-                    continue
                 if isinstance(node, ast.Import) and item.name == "os":
-                    aliases[name] = "os"
+                    member = "os"
                 elif (
                     isinstance(node, ast.ImportFrom)
                     and node.module == "os"
                     and node.level == 0
                     and item.name in _MEMBERS
                 ):
-                    aliases[name] = item.name
+                    member = item.name
+                else:
+                    continue
+                if node in direct:
+                    aliases[name] = member
+                    module_aliases.add(name)
+                else:
+                    aliases.setdefault(name, member)
         elif isinstance(node, ast.Name) and not isinstance(node.ctx, ast.Load):
             seen[node.id] += 1
         elif isinstance(node, ast.arg):
@@ -76,13 +82,14 @@ def _bindings(tree: ast.Module) -> tuple[dict[str, str], Counter[str]]:
             seen[node.name] += 1
         elif isinstance(node, ast.MatchMapping) and node.rest:
             seen[node.rest] += 1
-    return aliases, seen
+    ambiguous = {name for name in aliases if name not in module_aliases or seen[name] != 1}
+    return aliases, ambiguous
 
 
 class _Scanner(ast.NodeVisitor):
     def __init__(self, path: str, tree: ast.Module):
         self.path = path
-        self.aliases, self.bindings = _bindings(tree)
+        self.aliases, self.ambiguous = _bindings(tree)
         self.references: list[Reference] = []
         self.unsupported: list[Unsupported] = []
 
@@ -94,19 +101,19 @@ class _Scanner(ast.NodeVisitor):
 
     def member(self, node: ast.expr) -> tuple[str, bool]:
         if isinstance(node, ast.Name) and self.aliases.get(node.id) in _MEMBERS:
-            return self.aliases[node.id], self.bindings[node.id] != 1
+            return self.aliases[node.id], node.id in self.ambiguous
         if (
             isinstance(node, ast.Attribute)
             and node.attr in _MEMBERS
             and isinstance(node.value, ast.Name)
             and self.aliases.get(node.value.id) == "os"
         ):
-            return node.attr, self.bindings[node.value.id] != 1
+            return node.attr, node.value.id in self.ambiguous
         return "", False
 
     def record(self, node: ast.expr, key: ast.expr | None, ambiguous: bool) -> None:
         if ambiguous:
-            self.reject(node, "import alias has another binding")
+            self.reject(node, "import alias is local, conditional, or rebound")
         elif not isinstance(key, ast.Constant) or not isinstance(key.value, str):
             self.reject(node, "key is not a literal string")
         elif not KEY.fullmatch(key.value):

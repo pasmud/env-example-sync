@@ -46,7 +46,7 @@ def test_unsupported_access_reports_one_location_per_form_and_no_snippets():
 def test_shadowed_imports_do_not_create_false_names():
     result = scan("import os as runtime\ndef get(runtime):\n    return runtime.getenv('DEMO')\n", "x.py")
     assert not result.keys
-    assert result.unsupported[0].reason == "import alias has another binding"
+    assert result.unsupported[0].reason == "import alias is local, conditional, or rebound"
 
 
 def test_unrelated_functions_and_strings_are_ignored_but_nested_reads_count():
