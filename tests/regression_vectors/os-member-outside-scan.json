@@ -1,0 +1,9 @@
+{
+  "title": "os.putenv is outside the recognized member set",
+  "source": [
+    "import os",
+    "os.putenv('DEMO_WRITE', '')"
+  ],
+  "references": [],
+  "unsupported": []
+}
