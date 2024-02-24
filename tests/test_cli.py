@@ -1,4 +1,5 @@
 import os
+import warnings
 from pathlib import Path
 
 import pytest
@@ -63,3 +64,18 @@ def test_parse_failure_prevents_partial_stdout(tmp_path, monkeypatch, capsys):
     assert not output.out
     assert output.err.startswith("error: b.py:1:")
     assert "fake_default" not in output.err
+
+
+@pytest.mark.parametrize("warning_action", ["always", "error"])
+def test_parser_warnings_do_not_escape_inventory(tmp_path, monkeypatch, capsys, warning_action):
+    monkeypatch.chdir(tmp_path)
+    Path("synthetic.py").write_text("import os\n" r"os.getenv('DEMO_KEY', 'fake-default\q')" "\n")
+
+    with warnings.catch_warnings(record=True) as emitted:
+        warnings.simplefilter(warning_action)
+        assert main(["inventory", "synthetic.py"]) == 0
+
+    assert not emitted
+    output = capsys.readouterr()
+    assert output.out == "DEMO_KEY\tsynthetic.py:2:1\n"
+    assert output.err == ""

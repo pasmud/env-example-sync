@@ -2,6 +2,7 @@
 
 import ast
 import re
+import warnings
 from collections import Counter
 from dataclasses import dataclass
 
@@ -185,7 +186,11 @@ class _Scanner(ast.NodeVisitor):
 def scan(source: str | bytes, path: str) -> Inventory:
     """Return references and unsupported forms; never return source snippets or defaults."""
     try:
-        tree = ast.parse(source, filename=path)
+        with warnings.catch_warnings():
+            # Parser warnings can display source lines or become errors under -W error.
+            warnings.simplefilter("ignore", DeprecationWarning)
+            warnings.simplefilter("ignore", SyntaxWarning)
+            tree = ast.parse(source, filename=path)
     except (SyntaxError, ValueError, RecursionError) as exc:
         line = getattr(exc, "lineno", None) or 1
         column = getattr(exc, "offset", None) or 1

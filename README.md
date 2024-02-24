@@ -3,6 +3,8 @@
 Inventory Python configuration keys and keep a public `.env.example` complete. The scanner uses
 Python's AST: it does not execute project code, inspect the process environment, open real `.env`
 files, or print source snippets or literal defaults. It has no runtime dependencies beyond Python 3.11+.
+Parser warnings are suppressed during scanning so Python's warning settings do not change the
+inventory or reveal source text. Parse errors still report a location without the source line.
 
 ## Try it locally
 
