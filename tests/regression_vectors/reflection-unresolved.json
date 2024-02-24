@@ -1,0 +1,9 @@
+{
+  "title": "A getter reached by reflection is not resolved or diagnosed",
+  "source": [
+    "import os",
+    "getattr(os, 'getenv')('DEMO_REFLECTED')"
+  ],
+  "references": [],
+  "unsupported": []
+}
