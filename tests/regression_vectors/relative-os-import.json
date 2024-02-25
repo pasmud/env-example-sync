@@ -1,0 +1,9 @@
+{
+  "title": "A relative os import is not the standard library module",
+  "source": [
+    "from .os import getenv as read",
+    "read('DEMO_RELATIVE')"
+  ],
+  "references": [],
+  "unsupported": []
+}
