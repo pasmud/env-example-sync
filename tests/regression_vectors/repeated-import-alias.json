@@ -1,0 +1,10 @@
+{
+  "title": "Repeating an identical os import still binds the name twice",
+  "source": [
+    "import os as runtime",
+    "import os as runtime",
+    "runtime.getenv('DEMO_REPEAT')"
+  ],
+  "references": [],
+  "unsupported": [[3, 1, "import alias is local, conditional, or rebound"]]
+}
