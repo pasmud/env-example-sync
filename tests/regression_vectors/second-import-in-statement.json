@@ -1,0 +1,10 @@
+{
+  "title": "An os alias in a multi-import does not match the other module",
+  "source": [
+    "import math, os as runtime",
+    "runtime.getenv('DEMO_SIZE')",
+    "math.getenv('DEMO_IGNORED')"
+  ],
+  "references": [["DEMO_SIZE", 2, 1]],
+  "unsupported": []
+}
