@@ -1,0 +1,9 @@
+{
+  "title": "One underscore alone is a portable key",
+  "source": [
+    "from os import environ",
+    "environ['_']"
+  ],
+  "references": [["_", 2, 1]],
+  "unsupported": []
+}
