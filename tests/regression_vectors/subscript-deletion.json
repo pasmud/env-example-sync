@@ -1,0 +1,9 @@
+{
+  "title": "Deleting a literal subscript is diagnosed at the mapping",
+  "source": [
+    "import os",
+    "del os.environ['DEMO_REMOVE']"
+  ],
+  "references": [],
+  "unsupported": [[2, 5, "environment assignment or deletion"]]
+}
