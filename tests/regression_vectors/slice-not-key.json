@@ -1,0 +1,9 @@
+{
+  "title": "A slice of two literals is not a single environment key",
+  "source": [
+    "import os",
+    "os.environ['DEMO_LOW':'DEMO_HIGH']"
+  ],
+  "references": [],
+  "unsupported": [[2, 1, "key is not a literal string"]]
+}
