@@ -1,0 +1,9 @@
+{
+  "title": "One key on the same line retains both reference columns",
+  "source": [
+    "import os",
+    "(os.getenv('X'), os.environ['X'])"
+  ],
+  "references": [["X", 2, 2], ["X", 2, 18]],
+  "unsupported": []
+}
