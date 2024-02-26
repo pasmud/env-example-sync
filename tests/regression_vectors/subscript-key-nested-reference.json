@@ -1,0 +1,9 @@
+{
+  "title": "A computed subscript still inventories the nested getter",
+  "source": [
+    "import os",
+    "os.environ[os.getenv('DEMO_SELECTOR')]"
+  ],
+  "references": [["DEMO_SELECTOR", 2, 12]],
+  "unsupported": [[2, 1, "key is not a literal string"]]
+}
