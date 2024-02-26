@@ -1,0 +1,9 @@
+{
+  "title": "A trailing newline invalidates an otherwise portable key",
+  "source": [
+    "import os",
+    "os.getenv('DEMO_LINE\\n')"
+  ],
+  "references": [],
+  "unsupported": [[2, 1, "key is not a portable environment name"]]
+}
