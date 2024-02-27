@@ -1,0 +1,9 @@
+{
+  "title": "A bare imported getenv is recognized inside another call",
+  "source": [
+    "from os import getenv",
+    "sink(getenv('DEMO_SIZE'))"
+  ],
+  "references": [["DEMO_SIZE", 2, 6]],
+  "unsupported": []
+}
