@@ -1,0 +1,9 @@
+{
+  "title": "An object called os is not recognized without an import",
+  "source": [
+    "os = object()",
+    "os.getenv('DEMO_LOOKALIKE')"
+  ],
+  "references": [],
+  "unsupported": []
+}
