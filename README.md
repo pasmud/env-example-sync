@@ -13,6 +13,9 @@ python -m env_example_sync inventory examples/demo_service/app
 python -m env_example_sync sync --check --example examples/demo_service/.env.example examples/demo_service/app
 ```
 
+Install from this checkout with `python -m pip install .` in your own virtual environment to use
+the `env-example-sync` command instead of `python -m env_example_sync`.
+
 Inventory prints one `KEY<TAB>PATH:LINE:COLUMN` row per recognized lookup, sorted by key, then
 location. For example, `DEMO_ENDPOINT` is referenced at `examples/demo_service/app/settings.py:9:21`.
 Paths beneath the working directory are relative; other paths are absolute. Lines and columns are
@@ -74,3 +77,16 @@ aliases are conservatively flagged; an unrelated binding of the same name anywhe
 make an alias ambiguous. The tool does not resolve wildcard imports, reflection, wrappers or
 third-party configuration libraries and cannot prove it found every runtime lookup. It scans all
 branches syntactically without trying to establish what runs.
+
+## Development
+
+In a local virtual environment from the repository root:
+
+```sh
+python -m pip install '.[test]'
+python -m pytest -q
+ruff check .
+```
+
+CI runs on pushes and pull requests and checks the synthetic template with the installed command.
+This project is licensed under the [MIT License](LICENSE).
