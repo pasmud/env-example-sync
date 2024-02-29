@@ -1,0 +1,9 @@
+{
+  "title": "A multibyte prefix contributes UTF-8 bytes to the column",
+  "source": [
+    "import os",
+    "é = os.getenv('DEMO_LABEL')"
+  ],
+  "references": [["DEMO_LABEL", 2, 6]],
+  "unsupported": []
+}
