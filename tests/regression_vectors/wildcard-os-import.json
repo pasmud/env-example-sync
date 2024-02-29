@@ -1,0 +1,9 @@
+{
+  "title": "A wildcard os import does not resolve a bare getter",
+  "source": [
+    "from os import *",
+    "getenv('DEMO_WILDCARD')"
+  ],
+  "references": [],
+  "unsupported": []
+}
